@@ -33,6 +33,8 @@ plugins:
 
 custom:
   configuration: ${file(./config/${self:provider.stage}.yml):config}
+  # This file is ignored from VCS. Access secrets like so ${file(serverless-env.yml):config.KeyDefinedInServerlessEnvFile}
+  secrets:  ${file(serverless-env.yml):secrets}
   defaultStage: dev
   usersTableName: ${self:provider.stage}-${self:service}-users-table
   # Optional: create an IAM user to assume a role and deploy this service

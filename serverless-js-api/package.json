@@ -1,0 +1,59 @@
+{
+  "name": "js-api",
+  "version": "1.0.0",
+  "main": "src/handler.js",
+  "license": "MIT",
+  "scripts": {
+    "deploy:env": "sls deploy --stage $NODE_ENV --verbose --region ap-southeast-2",
+    "deploy": "export NODE_ENV=dev && yarn deploy:env",
+    "deploy:prod": "export NODE_ENV=prod && yarn deploy:env",
+    "deploy:staging": "export NODE_ENV=staging && yarn deploy:env",
+    "lint": "eslint ./src",
+    "lint:fix": "yarn lint --fix",
+    "test": "NODE_ENV=test jest --coverage --verbose --silent",
+    "sls:prune": "sls prune -n ",
+    "sls:destroy:env": "sls remove --stage $NODE_ENV --region ap-southeast-2",
+    "sls:destroy:staging": "NODE_ENV=staging yarn sls:destroy:env",
+    "sls:destroy:prod": "NODE_ENV=prod yarn sls:destroy:env",
+    "docs": "node swagger/index.js & USER_TABLE='abc' REGION='ap-southeast-2' python3.6 src/app.py"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.4.0",
+    "babel-loader": "7.1.1",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-runtime": "^6.22.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.6.1",
+    "eslint-plugin-jest": "^21.18.0",
+    "jest": "^23.4.1",
+    "serverless-plugin-package-dotenv-file": "0.0.2",
+    "serverless-plugin-write-env-vars": "^1.0.1",
+    "serverless-prune-plugin": "^1.3.2",
+    "serverless-webpack": "^4.4.0",
+    "webpack": "^3.0.0",
+    "webpack-node-externals": "^1.3.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ]
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "cheerio": "^1.0.0-rc.2",
+    "dynogels": "^9.0.0",
+    "joi": "^14.3.1",
+    "request-promise": "^4.2.2",
+    "serverless": "^1.45.1",
+    "serverless-pseudo-parameters": "^2.4.0"
+  }
+}

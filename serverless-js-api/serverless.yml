@@ -1,0 +1,109 @@
+service: js-api
+
+frameworkVersion: 1.45.1
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  profile: personal
+  region: ${opt:region, 'ap-southeast-2'}
+  stage: ${opt:stage, 'dev'} # dev || test || staging || prod
+  memorySize: 256
+  timeout: 15
+  logRetentionInDays: 14
+  stackTags:
+    app: js_api
+    env: ${self:provider.stage}
+  serviceName: ${self:service}-service
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:DescribeTable
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource:
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.usersTableName}
+  environment:
+    region: ${self:provider.region}
+    environment: ${self:provider.stage}
+    usersTableName: ${self:custom.usersTableName}
+
+plugins:
+  - serverless-webpack
+  - serverless-pseudo-parameters
+  - serverless-prune-plugin
+
+custom:
+  usersTableName: ${self:provider.stage}-${self:service}-users-table
+  configuration: ${file(./config/${self:provider.stage}.yml):config}
+  webpackIncludeModules: true
+  # This file is ignored from VCS. Access secrets like so ${file(serverless-env.yml):config.KeyDefinedInServerlessEnvFile}
+  secrets:  ${file(serverless-env.yml):secrets}
+  accountId: "#{AWS::AccountId}"
+  prune:
+    automatic: true
+    number: 5
+
+package:
+  exclude:
+    - config/**
+    - coverage/**
+    - migrations/**
+    - node_modules/**
+    - src/package.json
+    - src/**/*.test.js
+    - .editorconfig
+    - .env-*
+    - .eslint*
+    - .envrc
+    - .gitignore
+    - .node-version
+    - .travis.yml
+    - .yarnrc
+    - '*.sh'
+    - package.json
+    - yarn.lock
+    - README.md
+
+functions:
+  createUser:
+    handler: src/handlers.createUser
+    events:
+      - http:
+          path: /users/create
+          method: POST
+          cors: true
+  getUser:
+    handler: src/handlers.getUser
+    events:
+      - http:
+          path: /users/{userId}
+          method: GET
+          cors: true
+  
+  updateUser:
+    handler: src/handlers.updateUser
+    events:
+      - http:
+          path: /users/{userId}
+          method: PATCH
+          cors: true
+
+resources:
+  Resources:
+    UsersDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.usersTableName}

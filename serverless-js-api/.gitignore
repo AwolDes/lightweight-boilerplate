@@ -1,0 +1,11 @@
+.serverless/
+.webpack/
+node_modules/
+
+workers/output/
+payloads/output/
+
+*-env.yml
+
+dist/
+coverage/
