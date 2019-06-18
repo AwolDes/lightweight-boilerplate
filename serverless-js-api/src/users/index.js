@@ -53,13 +53,15 @@ export const getUser = (event, context, callback) => {
 };
 export const updateUser = (event, context, callback) => {
   const body = JSON.parse(event.body);
+  // eslint-disable-next-line consistent-return
   User.update({ uuid: event.pathParameters.userId, ...body }, (err, user) => {
     if (err) {
       console.log(err);
       return callback(null, errResponse(err));
     }
-    console.log(user)
+    console.log(user);
     console.log(`updated account ${user.get('uuid')}`);
+    // eslint-disable-next-line no-param-reassign
     delete user.attrs.password;
     callback(null, successResponse(user.attrs));
   });
