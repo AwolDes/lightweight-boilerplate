@@ -1,0 +1,7 @@
+pynamodb
+flask
+flask-restful
+passlib
+flask_jwt_extended
+flask-restful-swagger-2
+flask-cors

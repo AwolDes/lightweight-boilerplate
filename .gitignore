@@ -1,3 +1,4 @@
+## NODE ##
 # Logs
 logs
 *.log
@@ -59,3 +60,14 @@ typings/
 
 # next.js build output
 .next
+
+## PYTHON ##
+.env
+.vscode
+
+dist
+
+layers/*.zip
+
+venv
+__pycache__/
